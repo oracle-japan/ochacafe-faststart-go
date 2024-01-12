@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/db"
-	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/http"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/db"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/http"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
@@ -80,6 +80,11 @@ func main() {
 		defer shutdown()
 	}
 	db.SetupDB()
+	router := setupRouter()
+	router.Run()
+}
+
+func setupRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(otelgin.Middleware("ochacafe-app"))
 	router.Use(cors.New(cors.Config{
@@ -104,5 +109,5 @@ func main() {
 	router.GET("/items/:id", http.GetItemById)
 	router.POST("/items", http.UpdateItem)
 	router.DELETE("/items/:id", http.DeleteItem)
-	router.Run()
+	return router
 }
