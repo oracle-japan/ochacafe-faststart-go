@@ -1,9 +1,11 @@
+// サンプルアプリのレポジトリ
 package repo
 
 import (
 	"gorm.io/gorm"
 )
 
+// Items構造体定義
 type Items struct {
 	gorm.Model
 	Name       string
@@ -11,3 +13,4 @@ type Items struct {
 	Topics     string
 	Presenters string
 }
+

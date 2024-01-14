@@ -1,3 +1,4 @@
+// これはOCHaCafeデモ用に作成したサンプルアプリです。
 package main
 
 import (
@@ -20,8 +21,10 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
+// トレーサー用変数
 var tracerExp *otlptrace.Exporter
 
+// トレーサーのリトライ処理
 func retryInitTracer() func() {
 	var shutdown func()
 	go func() {
@@ -38,6 +41,7 @@ func retryInitTracer() func() {
 	return shutdown
 }
 
+// トレーサーの初期化処理
 func initTracer() func() {
 	// temporarily set timeout to 10s
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -69,12 +73,14 @@ func initTracer() func() {
 	}
 }
 
+// エラー処理
 func handleErr(err error, message string) {
 	if err != nil {
 		fmt.Printf("%s: %v", message, err)
 	}
 }
 
+// メイン処理
 func main() {
 	if shutdown := retryInitTracer(); shutdown != nil {
 		defer shutdown()
@@ -84,6 +90,7 @@ func main() {
 	router.Run()
 }
 
+// Ginルーターのセットアップ処理
 func setupRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(otelgin.Middleware("ochacafe-app"))

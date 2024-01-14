@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app/repo"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/repo"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -27,6 +27,8 @@ func SetupDB() {
 	if err != nil {
 		panic("Failed to open database" + err.Error())
 	}
+
+	db.Exec("TRUNCATE items")
 
 	db.AutoMigrate(&repo.Items{})
 

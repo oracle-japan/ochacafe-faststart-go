@@ -5,7 +5,6 @@ go 1.21.6
 require (
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
-	github.com/oracle-japan/ochacafe-github-actions/oke-app/backend-app v0.0.0-20230809041355-466b14b45ef0
 	github.com/stretchr/testify v1.8.4
 	github.com/uptrace/opentelemetry-go-extra/otelgorm v0.2.3
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.46.1
