@@ -6,30 +6,35 @@ import (
 	"time"
 
 	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/repo"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func GetDbInfo() string {
+func getDbInfo() string {
 	dbInfo := fmt.Sprintf(
-		"%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		"host=%s user=%s password=%s dbname=%s port=5432 TimeZone=Asia/Tokyo",
+		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
 		os.Getenv("DB_NAME"),
 	)
 	return dbInfo
 }
 
-func SetupDB() {
-	dbInfo := GetDbInfo()
-	db, err := gorm.Open(mysql.Open(dbInfo), &gorm.Config{})
+func GetDBInfo() *gorm.DB {
+	dbInfo := getDbInfo()
+
+	db, err := gorm.Open(postgres.Open(dbInfo), &gorm.Config{})
 	if err != nil {
 		panic("Failed to open database" + err.Error())
 	}
 
-	db.Exec("TRUNCATE items")
+	return db
+}
 
+func SetupDB() {
+
+	db := GetDBInfo()
 	db.AutoMigrate(&repo.Items{})
 
 	Items := []*repo.Items{
@@ -70,6 +75,8 @@ func SetupDB() {
 			Presenters: "Shuhei Kawamura",
 		},
 	}
+
+	db.Exec("TRUNCATE items")
 
 	db.Create(Items)
 }

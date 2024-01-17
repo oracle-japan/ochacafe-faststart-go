@@ -1,17 +1,15 @@
 version: "3"
 
 services:
-  db:
-    image: mysql:8
-    container_name: mysql
+  postgres:
+    container_name: test-db
+    image: postgres:14
     restart: always
+    ports: 
+      - "5432:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASS}
-      TZ: ${TZ}
-    ports:
-      - ${DB_PORT}:3306
+      POSTGRES_USER: "demo"
+      POSTGRES_PASSWORD: "password" 
+      POSTGRES_DB: "demo"
     tmpfs:
-      - /var/lib/mysql
+      - /var/lib/postgresql/data
