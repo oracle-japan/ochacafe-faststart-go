@@ -37,7 +37,7 @@ export async function getServerSideProps() {
 export default function Home({ data }) {
   return (
     <>
-      <h1>OCHaCafe Season7 Demo App</h1>
+      <h1>OCHaCafe Season8 fast-start golang Demo App</h1>
       <Table dataSource={data} columns={columns} />
     </>
   )

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -46,8 +47,20 @@ func TestGetById(t *testing.T) {
 		defer shutdown()
 	}
 	router := setupRouter()
+
+	// 1件だけ適当に取る
+	w_test := httptest.NewRecorder()
+	req_test, _ := http.NewRequest("GET", "/items", nil)
+	router.ServeHTTP(w_test, req_test)
+	var itemsList []repo.Items
+	err_test := json.Unmarshal(w_test.Body.Bytes(), &itemsList)
+	if err_test != nil {
+		log.Fatal(err_test)
+	}
+
+	// 適当に取得したデータでテスト
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/items/1", nil)
+	req, _ := http.NewRequest("GET", "/items/"+strconv.FormatUint(uint64(itemsList[0].ID), 10), nil)
 	router.ServeHTTP(w, req)
 
 	var items repo.Items
@@ -57,7 +70,7 @@ func TestGetById(t *testing.T) {
 	}
 
 	assert.Equal(t, 200, w.Code)
-	assert.Equal(t, "速習Golang", items.Name)
+	assert.Equal(t, itemsList[0].ID, items.ID)
 }
 
 func TestPostNewItem(t *testing.T) {
@@ -81,9 +94,21 @@ func TestDeleteNewItem(t *testing.T) {
 	if shutdown := retryInitTracer(); shutdown != nil {
 		defer shutdown()
 	}
+
 	router := setupRouter()
+
+	// 1件だけ適当に取る
+	w_test := httptest.NewRecorder()
+	req_test, _ := http.NewRequest("GET", "/items", nil)
+	router.ServeHTTP(w_test, req_test)
+	var itemsList []repo.Items
+	err_test := json.Unmarshal(w_test.Body.Bytes(), &itemsList)
+	if err_test != nil {
+		log.Fatal(err_test)
+	}
+
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("DELETE", "/items/1", nil)
+	req, _ := http.NewRequest("DELETE", "/items/"+strconv.FormatUint(uint64(itemsList[0].ID), 10), nil)
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 200, w.Code)
