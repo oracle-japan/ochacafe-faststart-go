@@ -72,8 +72,9 @@ func TestPostNewItem(t *testing.T) {
 	req.Header.Add("Accept", "application/json")
 	router.ServeHTTP(w, req)
 
-	// サボってステータスコードだけ見る
 	assert.Equal(t, 200, w.Code)
+	// 更新したレコード数
+	assert.Equal(t, "1", w.Body.String())
 }
 
 func TestDeleteNewItem(t *testing.T) {
@@ -85,6 +86,7 @@ func TestDeleteNewItem(t *testing.T) {
 	req, _ := http.NewRequest("DELETE", "/items/1", nil)
 	router.ServeHTTP(w, req)
 
-	// サボってステータスコードだけ見る
 	assert.Equal(t, 200, w.Code)
+	// 削除したレコード数
+	assert.Equal(t, "1", w.Body.String())
 }
