@@ -10,25 +10,7 @@
 │   └── app.yaml -> デモアプリケーションのManifest
 ├── oke-app　-> デモアプリケーションのソースコード
 │   ├── backend-app　-> バックエンドアプリ
-│   │   ├── crud
-│   │   ├── db
-│   │   ├── docker-compose.yaml　-> UnitTest用のPostgreSQLコンテナ構築用docker-composeファイル
-│   │   ├── Dockerfile
-│   │   ├── go.mod
-│   │   ├── go.sum
-│   │   ├── http
-│   │   ├── main.go
-│   │   ├── main_test.go -> テストコード
-│   │   └── repo
-│   └── frontend-app　-> フロントエンドアプリ(今回はおまけの位置付け)
-│       ├── Dockerfile
-│       ├── jsconfig.json
-│       ├── next.config.js
-│       ├── node_modules
-│       ├── package.json
-│       ├── package-lock.json
-│       ├── README.md
-│       └── src
+│   └── frontend-app　-> フロントエンドアプリ(Next.js製。今回はおまけの位置付け)
 └── README.md
 ```
 
@@ -37,18 +19,21 @@
 
 ```
 .
+├── cmd
+│   └── demo
+│       ├── main.go -> メイン処理
+│       ├── main_test.go -> テストコード
+│       └── test
+│           └── docker-compose.yaml　-> UnitTest用PostgreSQLコンテナ起動ファイル
 ├── crud -> CRUD処理(データベースへの操作)
 │   └── crud.go 
 ├── db -> DB処理(コネクションやMigrateなど)
 │   └── db.go
-├── docker-compose.yaml　-> UnitTest用のPostgreSQLコンテナ構築用docker-composeファイル
 ├── Dockerfile　
 ├── go.mod
 ├── go.sum
 ├── http　-> HTTPのメソッド(GET/POST/DELETE)に応じた処理
 │   └── methods.go
-├── main.go　-> メイン処理
-├── main_test.go -> テストケース
 └── repo　-> データ定義
     └── items.go
 ```
@@ -58,6 +43,7 @@
 #### PodtgreSQLコンテナの実行
 
 ```sh
+$ cd oke-app/backend-app/cmd/demo/test
 $ docker-compose up -d
 [+] Running 2/2
  ✔ Network backend-app_default       Created                                                                                                                                                    0.0s 
@@ -68,7 +54,7 @@ $ docker-compose up -d
 #### アプリケーション実行
 
 ```sh
-$ cd oke-app/backend-app
+$ cd oke-app/backend-app/cmd/demo
 $ go run main.go
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
@@ -238,7 +224,7 @@ $ godoc -http=:8080
 using module mode; GOMOD=/home/opc/ochacafe-faststart-go/oke-app/backend-app/go.mod
 ```
 
-`http://127.0.0.1:8080`にアクセスする
+`http://localhost:8080`にアクセスする
 
 ![doc1](images/doc1.png)
 
@@ -262,7 +248,7 @@ $ pkgsite
 2024/01/18 11:42:33 Info: Listening on addr http://localhost:8080
 ```
 
-`http://127.0.0.1:8080/github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app`にアクセスする
+`http://localhost:8080/github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app`にアクセスする
 
 
 ![doc2](images/doc2.png)
