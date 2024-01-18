@@ -3,7 +3,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log/slog"
 	"os"
 	"time"
 
@@ -76,7 +76,8 @@ func initTracer() func() {
 // エラー処理
 func handleErr(err error, message string) {
 	if err != nil {
-		fmt.Printf("%s: %v", message, err)
+		slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+		slog.Error("%s: %v", message, err)
 	}
 }
 
