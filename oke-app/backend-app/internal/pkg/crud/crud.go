@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/db"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/repo"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/db"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/repo"
 	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
 )
 

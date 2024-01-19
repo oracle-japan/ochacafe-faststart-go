@@ -5,10 +5,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY cmd/demo/main.go ./
-COPY http/*.go ./http/
-COPY db/*.go ./db/
-COPY repo/*.go ./repo/
-COPY crud/*.go ./crud/
+COPY internal ./internal
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o demo-app
 

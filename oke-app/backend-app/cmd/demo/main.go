@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/db"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/http"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/db"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/http"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"

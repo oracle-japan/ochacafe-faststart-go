@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/repo"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/repo"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

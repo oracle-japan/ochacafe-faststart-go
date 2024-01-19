@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/crud"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/repo"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/crud"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/repo"
 )
 
 func GetAll(c *gin.Context) {

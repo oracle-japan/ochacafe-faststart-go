@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/db"
-	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/repo"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/db"
+	"github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/repo"
 	"github.com/stretchr/testify/assert"
 )
 
