@@ -22,20 +22,21 @@
 ├── cmd
 │   └── demo
 │       ├── main.go -> メイン処理
-│       ├── main_test.go -> テストコード
-│       └── test
-│           └── docker-compose.yaml　-> UnitTest用PostgreSQLコンテナ起動ファイル
-├── crud -> CRUD処理(データベースへの操作)
-│   └── crud.go 
-├── db -> DB処理(コネクションやMigrateなど)
-│   └── db.go
-├── Dockerfile　
+│       └── main_test.go -> テストコード
+├── docker-compose.yaml -> UnitTest用PostgreSQLコンテナ起動ファイル
+├── Dockerfile
 ├── go.mod
 ├── go.sum
-├── http　-> HTTPのメソッド(GET/POST/DELETE)に応じた処理
-│   └── methods.go
-└── repo　-> データ定義
-    └── items.go
+└── internal
+    └── pkg
+        ├── crud -> CRUD処理(データベースへの操作)
+        │   └── crud.go
+        ├── db -> DB処理(コネクションやMigrateなど)
+        │   └── db.go
+        ├── http -> HTTPのメソッド(GET/POST/DELETE)に応じた処理
+        │   └── methods.go
+        └── repo -> データ定義
+            └── items.go
 ```
 
 ### アプリケーションのローカル実行と動作確認
@@ -43,7 +44,6 @@
 #### PodtgreSQLコンテナの実行
 
 ```sh
-$ cd oke-app/backend-app/cmd/demo/test
 $ docker-compose up -d
 [+] Running 2/2
  ✔ Network backend-app_default       Created                                                                                                                                                    0.0s 
@@ -54,8 +54,7 @@ $ docker-compose up -d
 #### アプリケーション実行
 
 ```sh
-$ cd oke-app/backend-app/cmd/demo
-$ go run main.go
+$ go run oke-app/backend-app/cmd/demo/main.go
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
@@ -143,6 +142,7 @@ $ curl http://localhost:8080/items
 #### テスト実行
 
 ```sh
+$ cd oke-app/backend-app/cmd/demo
 $ go test -coverpkg=./... -cover -coverprofile=cover.out
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
@@ -225,8 +225,6 @@ using module mode; GOMOD=/home/opc/ochacafe-faststart-go/oke-app/backend-app/go.
 ```
 
 `http://localhost:8080`にアクセスする
-
-![doc1](images/doc1.png)
 
 #### pkgsite
 
