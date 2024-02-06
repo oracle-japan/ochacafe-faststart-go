@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html>
+	<head>q
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>demo: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/cmd/demo/main.go (69.4%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">// これはOCHaCafeデモ用に作成したサンプルアプリです。
+package main
+
+import (
+        "context"
+        "log/slog"
+        "os"
+        "time"
+
+        "github.com/gin-contrib/cors"
+        "github.com/gin-gonic/gin"
+        "github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/db"
+        "github.com/oracle-japan/ochacafe-faststart-go/oke-app/backend-app/internal/pkg/http"
+        "go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
+        "go.opentelemetry.io/otel"
+        "go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+        "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+        "go.opentelemetry.io/otel/propagation"
+        "go.opentelemetry.io/otel/sdk/resource"
+        sdktrace "go.opentelemetry.io/otel/sdk/trace"
+        semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+)
+
+// トレーサー用変数
+var tracerExp *otlptrace.Exporter
+
+// トレーサーのリトライ処理
+func retryInitTracer() func() <span class="cov8" title="1">{
+        var shutdown func()
+        go func() </span><span class="cov8" title="1">{
+                for </span><span class="cov8" title="1">{
+                        // otel will reconnected and re-send spans when otel col recover. so, we don't need to re-init tracer exporter.
+                        if tracerExp == nil </span><span class="cov8" title="1">{
+                                shutdown = initTracer()
+                        }</span> else<span class="cov8" title="1"> {
+                                break</span>
+                        }
+                        <span class="cov8" title="1">time.Sleep(time.Minute * 5)</span>
+                }
+        }()
+        <span class="cov8" title="1">return shutdown</span>
+}
+
+// トレーサーの初期化処理
+func initTracer() func() <span class="cov8" title="1">{
+        // temporarily set timeout to 10s
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        defer cancel()
+
+        otlpHTTPExporter, err := otlptracehttp.New(ctx,
+                otlptracehttp.WithURLPath("/20200101/opentelemetry/private/v1/traces"),
+                otlptracehttp.WithHeaders(map[string]string{
+                        "Authorization": "dataKey " + os.Getenv("APM_PRIVATE_DATA_KEY"),
+                }),
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                handleErr(err, "OTLP Trace Creation")
+                return nil
+        }</span>
+
+        <span class="cov8" title="1">tracerProvider := sdktrace.NewTracerProvider(
+                sdktrace.WithBatcher(otlpHTTPExporter),
+                sdktrace.WithSampler(sdktrace.AlwaysSample()),
+                sdktrace.WithResource(resource.NewWithAttributes(semconv.SchemaURL)))
+
+        otel.SetTracerProvider(tracerProvider)
+        otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
+        tracerExp = otlpHTTPExporter
+        return func() </span><span class="cov0" title="0">{
+                // Shutdown will flush any remaining spans and shut down the exporter.
+                handleErr(tracerProvider.Shutdown(ctx), "failed to shutdown TracerProvider")
+        }</span>
+}
+
+// エラー処理
+func handleErr(err error, message string) <span class="cov0" title="0">{
+        if err != nil </span><span class="cov0" title="0">{
+                slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+                slog.Error("%s: %v", message, err)
+        }</span>
+}
+
+// メイン処理
+func main() <span class="cov0" title="0">{
+        if shutdown := retryInitTracer(); shutdown != nil </span><span class="cov0" title="0">{
+                defer shutdown()
+        }</span>
+        <span class="cov0" title="0">db.SetupDB()
+        router := setupRouter()
+        router.Run()</span>
+}
+
+// Ginルーターのセットアップ処理
+func setupRouter() *gin.Engine <span class="cov8" title="1">{
+        router := gin.Default()
+        router.Use(otelgin.Middleware("ochacafe-app"))
+        router.Use(cors.New(cors.Config{
+                AllowOrigins: []string{"*"},
+                AllowMethods: []string{
+                        "POST",
+                        "GET",
+                        "DELETE",
+                },
+                AllowHeaders: []string{
+                        "Access-Control-Allow-Credentials",
+                        "Access-Control-Allow-Headers",
+                        "Content-Type",
+                        "Content-Length",
+                        "Accept-Encoding",
+                        "Authorization",
+                },
+                AllowCredentials: true,
+                MaxAge:           24 * time.Hour,
+        }))
+        router.GET("/items", http.GetAll)
+        router.GET("/items/:id", http.GetItemById)
+        router.POST("/items", http.UpdateItem)
+        router.DELETE("/items/:id", http.DeleteItem)
+        return router
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
