@@ -47,6 +47,13 @@ spec:
           image: nrt.ocir.io/orasejapan/golang-demo/oke-app-nextjs:latest
           ports:
             - containerPort: 3000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: 200Mi
+            limits:
+              cpu: "300m"
+              memory: 500Mi
           env:
             - name: API_URL
               value: golang-demo-app-svc:8080
@@ -72,6 +79,13 @@ spec:
           image: nrt.ocir.io/orasejapan/golang-demo/oke-app-golang:latest
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: 200Mi
+            limits:
+              cpu: "300m"
+              memory: 500Mi
           env:
             - name: DB_USER
               valueFrom:
