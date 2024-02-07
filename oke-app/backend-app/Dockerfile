@@ -7,11 +7,17 @@ RUN go mod download
 COPY cmd/demo/main.go ./
 COPY internal ./internal
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o demo-app
-
-RUN apk update && apk add --no-cache ca-certificates && update-ca-certificates
+RUN CGO_ENABLED=0 GOOS=linux go build -o demo-app && apk update && apk add --no-cache ca-certificates && update-ca-certificates
 
 FROM alpine AS runner
+
+# add new user because of non-root
+RUN addgroup -g 1000 -S demo \
+    && adduser -u 1000 -S demo -G demo
+
+# switch user
+USER demo
+
 WORKDIR /app
 
 COPY --from=builder /app/demo-app ./
